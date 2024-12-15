@@ -16,7 +16,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>shopme_backend</module>
-        <module>shopme_frontend</module>
         <module>shopme_front</module>
     </modules>
 
