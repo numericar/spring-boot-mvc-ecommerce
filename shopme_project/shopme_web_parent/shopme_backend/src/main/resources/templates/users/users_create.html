@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,9 @@
 
     <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
     <script type="text/javascript" th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
 </head>
+
 <body>
     <!-- navbar -->
     <div class="container-fluid">
@@ -62,30 +65,34 @@
     <div>
         <h2>Mange/Create User</h2>
     </div>
-    
+
     <div class="container d-flex justify-content-center">
         <form th:action="@{/users/create}" method="post" class="w-50" th:object="${user}">
             <div class="form-group mb-3">
                 <label class="form-label" for="email">Email</label>
-                <input type="email" class="form-control" name="email" th:field="*{email}" required minlength="8" maxlength="50" placeholder="user@gmail.com">
+                <input type="email" class="form-control" name="email" th:field="*{email}" required minlength="8"
+                    maxlength="50" placeholder="user@gmail.com">
             </div>
             <div class="form-group mb-3">
                 <label class="form-label" for="firstName">First name</label>
-                <input type="text" class="form-control"  th:field="*{firstName}" required minlength="8" maxlength="50">
+                <input type="text" class="form-control" th:field="*{firstName}" required minlength="8" maxlength="50">
             </div>
             <div class="form-group mb-3">
                 <label class="form-label" for="lastName">Last name</label>
-                <input type="text" class="form-control" name="lastName" th:field="*{lastName}" required minlength="8" maxlength="50">
+                <input type="text" class="form-control" name="lastName" th:field="*{lastName}" required minlength="8"
+                    maxlength="50">
             </div>
             <div class="form-group mb-3">
                 <label class="form-label" for="password">Password</label>
-                <input type="password" class="form-control" name="password" th:field="*{password}" required minlength="8" maxlength="50">
+                <input type="password" class="form-control" name="password" th:field="*{password}" required
+                    minlength="8" maxlength="50">
             </div>
             <div class="mb-3">
                 <b>Assign user roles</b>
                 <th:block th:each="role : ${roles}">
                     <div class="form-check">
-                        <input type="checkbox" name="role" class="form-check-input" th:field="*{roles}" th:value="${role.id}">
+                        <input type="checkbox" name="role" class="form-check-input" th:field="*{roles}"
+                            th:value="${role.id}">
                         <label class="form-check-label" th:text="${role.name}"></label>
                         <small>- [[${role.description}]]</small>
                     </div>
@@ -99,10 +106,29 @@
                 </div>
             </div>
             <div class="d-flex justify-content-end gap-3">
+                <button type="button" class="btn btn-outline-primary" onclick="checkEmailAlreadyToUse()">Check
+                    email</button>
                 <button type="button" class="btn btn-outline-danger" onclick="redirectToUsersPage()">Cancel</button>
                 <button type="submit" class="btn btn-primary">Create</button>
             </div>
         </form>
+    </div>
+
+    <div class="modal" id="emailDuplicateModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modalContent">
+                    <p>Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- footer -->
@@ -111,9 +137,31 @@
     </div>
 
     <script>
+        const duplicateModal = document.getElementById('emailDuplicateModal');
+
         function redirectToUsersPage() {
             window.location.href = "[[@{/users}]]"; // redirect to another page use thymeleaf syntax
         }
+
+        function checkEmailAlreadyToUse() {
+            const userEmail = document.getElementById("email").value;
+
+            fetch("[[@{/api/users/check_email}]]" + `?email=${userEmail}`, {
+                method: 'get'
+            }).then((response) => {
+                return response.text();
+            })
+            .then((data) => {
+                if (data !== 'OK') {
+                    const modalInstance = new bootstrap.Modal(duplicateModal);
+                    document.getElementById('modalTitle').innerHTML = 'Warning';
+                    document.getElementById('modalContent').innerHTML = `email ${userEmail} is dupplicated!`;
+
+                    modalInstance.show();
+                }
+            }).catch((err) => console.log(err));
+        }
     </script>
 </body>
+
 </html>

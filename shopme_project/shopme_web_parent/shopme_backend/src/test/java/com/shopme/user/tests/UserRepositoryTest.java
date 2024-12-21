@@ -106,4 +106,13 @@ public class UserRepositoryTest {
 
         this.repo.findById(this.userId);
     }
+
+    @Test
+    public void testGetUserByEmail() {
+        String email = "mint.colorfuls@gmail.com";
+
+        Optional<User> userOptional = this.repo.getUserByEmail(email);
+
+        assertTrue(userOptional.isPresent(), "User should not be null");
+    }
 }

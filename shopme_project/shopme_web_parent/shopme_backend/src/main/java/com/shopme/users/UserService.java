@@ -1,5 +1,7 @@
 package com.shopme.users;
 
+import java.util.Optional;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,5 +34,11 @@ public class UserService {
         user.setPassword(passwordEncoded);
 
         this.userRepository.save(user);
+    }
+
+    public boolean isEmailUnique(String email) {
+        Optional<User> user = this.userRepository.getUserByEmail(email);
+
+        return user.isPresent();
     }
 }
