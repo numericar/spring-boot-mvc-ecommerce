@@ -7,6 +7,9 @@
     <title>Admin Control Panel</title>
 
     <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/fontawesome/all.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+
     <script type="text/javascript" th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
 </head>
 
@@ -86,13 +89,21 @@
                 <tbody>
                     <tr th:each="user : ${users}">
                         <td th:text="${user.Id}"></td>
-                        <td>Not Found</td>
+                        <td>
+                            <i class="fa-regular fa-image fa-lg icon-dark"></i>
+                        </td>
                         <td th:text="${user.email}"></td>
                         <td th:text="${user.firstName}"></td>
                         <td th:text="${user.lastName}"></td>
                         <td th:text="${user.roles.toString()}"></td>
-                        <td th:text="${user.enabled}"></td>
-                        <td>action</td>
+                        <td>
+                            <a th:if="${user.enabled == true}" class="fa-solid fa-circle-check icon-green"></a>
+                            <a th:if="${user.enabled == false}" class="fa-solid fa-circle-xmark icon-red"></a>
+                        </td>
+                        <td>
+                            <a class="fa-regular fa-pen-to-square icon-dark"></a>
+                            <a class="fa-regular fa-trash-can icon-red"></a>
+                        </td>
                     </tr>
                 </tbody>
             </table>
