@@ -63,11 +63,12 @@
 
     <!-- content -->
     <div>
-        <h2>Mange/Create User</h2>
+        <h2>[[${pageTitle}]]</h2>
     </div>
 
     <div class="container d-flex justify-content-center">
         <form th:action="@{/users/create}" method="post" class="w-50" th:object="${user}">
+            <input type="hidden" th:field="*{id}">
             <div class="form-group mb-3">
                 <label class="form-label" for="email">Email</label>
                 <input type="email" class="form-control" name="email" th:field="*{email}" required minlength="8"
@@ -84,8 +85,9 @@
             </div>
             <div class="form-group mb-3">
                 <label class="form-label" for="password">Password</label>
-                <input type="password" class="form-control" name="password" th:field="*{password}" required
+                <input th:if="${user.id == null}" type="password" class="form-control" name="password" th:field="*{password}" required
                     minlength="8" maxlength="50">
+                <input th:if="${user.id != null}" type="password" class="form-control" name="password" th:field="*{password}" minlength="8" maxlength="50">
             </div>
             <div class="mb-3">
                 <b>Assign user roles</b>
@@ -145,8 +147,9 @@
 
         function checkEmailAlreadyToUse() {
             const userEmail = document.getElementById("email").value;
+            const userId = document.getElementById("id").value;
 
-            fetch("[[@{/api/users/check_email}]]" + `?email=${userEmail}`, {
+            fetch("[[@{/api/users/check_email}]]" + `?email=${userEmail}&userId=${userId}`, {
                 method: 'get'
             }).then((response) => {
                 return response.text();

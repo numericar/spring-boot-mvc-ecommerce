@@ -101,7 +101,7 @@
                             <a th:if="${user.enabled == false}" class="fa-solid fa-circle-xmark icon-red"></a>
                         </td>
                         <td>
-                            <a class="fa-regular fa-pen-to-square icon-dark"></a>
+                            <a class="fa-regular fa-pen-to-square icon-dark" th:href="@{'/users/edit/' + ${user.id}}"></a>
                             <a class="fa-regular fa-trash-can icon-red"></a>
                         </td>
                     </tr>

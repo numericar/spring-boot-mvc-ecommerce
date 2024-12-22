@@ -15,4 +15,7 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     @Query("SELECT u FROM User u WHERE u.email = :email")
     public Optional<User> getUserByEmail(@Param("email") String email);
 
+    @Query("SELECT u FROM User u WHERE u.email = :email AND u.id != :userId")
+    public Optional<User> getUserByEmail(@Param("email") String email, @Param("userId") Integer userId);
+
 }

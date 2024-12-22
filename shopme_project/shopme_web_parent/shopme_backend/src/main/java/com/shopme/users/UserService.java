@@ -30,15 +30,34 @@ public class UserService {
     }
 
     public void save(User user) {
-        String passwordEncoded = this.passwordEncoder.encode(user.getPassword());
-        user.setPassword(passwordEncoded);
+        boolean isUpdateUser = user.getId() != null;
+
+        if (isUpdateUser) {
+            User existingUser = this.userRepository.findById(user.getId()).get();
+
+            if (user.getPassword().isEmpty()) {
+                user.setPassword(existingUser.getPassword());
+            } else {
+                String passwordEncoded = this.passwordEncoder.encode(user.getPassword());
+                user.setPassword(passwordEncoded);
+            }
+        } else {
+            String passwordEncoded = this.passwordEncoder.encode(user.getPassword());
+            user.setPassword(passwordEncoded);
+        }
 
         this.userRepository.save(user);
     }
 
-    public boolean isEmailUnique(String email) {
-        Optional<User> user = this.userRepository.getUserByEmail(email);
+    public boolean isEmailUnique(String email, Integer userId) {
+        Optional<User> user = this.userRepository.getUserByEmail(email, userId);
 
         return user.isPresent();
+    }
+
+    public Optional<User> findById(Integer userId) {
+        Optional<User> userOptional = this.userRepository.findById(userId);
+
+        return userOptional;
     }
 }
