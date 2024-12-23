@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.shopme.commons.entities.Role;
 import com.shopme.commons.entities.User;
+import com.shopme.exceptions.UserNotFoundException;
 
 @Service
 public class UserService {
@@ -59,5 +60,15 @@ public class UserService {
         Optional<User> userOptional = this.userRepository.findById(userId);
 
         return userOptional;
+    }
+
+    public void delete(Integer id) {
+        Long count = this.userRepository.countById(id);
+
+        if (count <= 0) {
+            throw new UserNotFoundException("Could not find any user with ID " + id);
+        }
+
+        this.userRepository.deleteById(id);
     }
 }

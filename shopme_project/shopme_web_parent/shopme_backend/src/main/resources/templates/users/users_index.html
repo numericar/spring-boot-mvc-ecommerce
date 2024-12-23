@@ -11,6 +11,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 
     <script type="text/javascript" th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
 </head>
 
 <body>
@@ -69,8 +70,8 @@
             <h1>Manage users</h1>
             <a th:href="@{/users/create}">Create user</a>
         </div>
-        <div th:if="${message != null}" class="text-center alert alert-success">
-            [[${message}]]
+        <div class="text-center alert alert-success" id="message">
+            <th:block th:if="${message != null}">[[${message}]]</th:block> 
         </div>
         <div>
             <table class="table">
@@ -87,7 +88,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="user : ${users}">
+                    <tr th:each="user : ${users}" th:id="'user-index-' + ${user.id}">
                         <td th:text="${user.Id}"></td>
                         <td>
                             <i class="fa-regular fa-image fa-lg icon-dark"></i>
@@ -102,7 +103,7 @@
                         </td>
                         <td>
                             <a class="fa-regular fa-pen-to-square icon-dark" th:href="@{'/users/edit/' + ${user.id}}"></a>
-                            <a class="fa-regular fa-trash-can icon-red"></a>
+                            <a class="fa-regular fa-trash-can icon-red" th:onclick="'showConfirmDeleteUserModal(' + ${user.id} + ')'"></a>
                         </td>
                     </tr>
                 </tbody>
@@ -113,6 +114,75 @@
     <div class="text-center">
         <p>Shopme Control Panel - Copyright &copy; Shopme</p>
     </div>
+
+    <div class="modal" id="confirmDeleteUser">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modalContent">
+                    <p>Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <!-- <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button> -->
+                    <button type="button" class="btn btn-danger" onclick="confirmDeleteUser()">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const confirmDeleteUserElement = document.getElementById('confirmDeleteUser');
+        const messageElement = document.getElementById('message');
+
+        messageElement.style.display = 'none';
+
+        const message = '[[${message}]]';
+        if (message) {
+            messageElement.style.display = 'block';
+            messageElement.innerHTML = message;
+        }
+
+        const deleteUserModalInstance = new bootstrap.Modal(confirmDeleteUserElement);
+
+        let currentDeleteUserIdSelet = 0;
+
+        // deleteUserBtnElement.onclick = (e) => {
+        //     e.preventDefault();
+        //     const resultConfirm = confirm("Are you sure to remove this user ?");
+
+        //     if (resultConfirm) {
+        //         fetch();
+        //     }
+        // }
+
+        function showConfirmDeleteUserModal(userId) {
+            currentDeleteUserIdSelet = userId;
+
+            document.getElementById('modalTitle').innerHTML = 'Warning';
+            document.getElementById('modalContent').innerHTML = `Are you sure to remove user id: ${userId}`;
+            
+            deleteUserModalInstance.show();
+        }
+
+        function confirmDeleteUser() {
+            if (currentDeleteUserIdSelet > 0) {
+                console.log(currentDeleteUserIdSelet);
+                const removeApiPath = "[[@{/users/delete/}]]" + currentDeleteUserIdSelet;
+
+                fetch(removeApiPath);
+
+                messageElement.style.display = 'block';
+                messageElement.innerHTML = 'The user id ' + currentDeleteUserIdSelet + ' has been remove successfully';
+
+                document.getElementById('user-index-' + currentDeleteUserIdSelet).remove();
+            }
+
+            deleteUserModalInstance.hide();
+        }
+    </script>
 </body>
 
 </html>

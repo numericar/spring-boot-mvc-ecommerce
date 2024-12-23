@@ -115,4 +115,12 @@ public class UserRepositoryTest {
 
         assertTrue(userOptional.isPresent(), "User should not be null");
     }
+
+    @Test
+    public void testCountById() {
+        Integer id = 1;
+        Long count = this.repo.countById(id);
+
+        assertTrue(count > 0, "Count should more than zero");
+    }
 }
